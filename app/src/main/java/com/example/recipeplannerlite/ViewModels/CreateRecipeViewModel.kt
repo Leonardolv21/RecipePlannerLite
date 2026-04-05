@@ -3,6 +3,9 @@ package com.example.recipeplannerlite.ViewModels
 import androidx.lifecycle.ViewModel
 import com.example.recipeplannerlite.models.CreateRecipeState
 import com.example.recipeplannerlite.models.EditableIngredient
+import com.example.recipeplannerlite.models.Ingredient
+import com.example.recipeplannerlite.models.Recipe
+import com.example.recipeplannerlite.models.RecipeRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -63,6 +66,17 @@ class CreateRecipeViewModel : ViewModel() {
         val hasError = state.name.isBlank() ||
                 state.ingredients.any { it.name.isBlank() || it.quantity.isBlank() }
         if (hasError) return
+
+        val newRecipe = Recipe(
+            id = System.currentTimeMillis().toInt(),
+            name = state.name,
+            description = state.description,
+            emoji = state.selectedEmoji,
+            ingredients = state.ingredients.map {
+                Ingredient(it.name, it.quantity)
+            }
+        )
+        RecipeRepository.addRecipe(newRecipe)
 
         _state.value = state.copy(isSaved = true)
     }

@@ -17,13 +17,13 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,10 +41,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 @Composable
 fun RecipeListScreen(
     modifier: Modifier = Modifier,
-    vm: RecipeListViewModel = viewModel()
-
+    vm: RecipeListViewModel = viewModel(),
+    onNavigateToCreate: () -> Unit
 ){
     val state = vm.state.collectAsState().value
+    LaunchedEffect(Unit) {
+        vm.reloadRecipes()
+    }
 
     Box(modifier = Modifier.fillMaxSize()){
         Column {
@@ -63,18 +66,22 @@ fun RecipeListScreen(
             RecipeList(state.filteredRecipes)
         }
 
-        FabButton()
+        FabButton(onNavigateToCreate)
     }
 }
 
 @Composable
-fun FabButton() {
+fun FabButton(
+    onNavigateToCreate: () -> Unit
+) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomEnd
     ) {
         Button(
-            onClick = {},
+            onClick = {
+                onNavigateToCreate()
+            },
             shape = RoundedCornerShape(50),
             modifier = Modifier.padding(20.dp)
         ) {
@@ -132,7 +139,7 @@ fun RecipeCard( recipe: Recipe) {
 
             Text("INGREDIENTES", fontSize = 10.sp, color = Color.Gray)
 
-            recipe.ingredients.take(3).forEach {
+            recipe.ingredients.forEach {
                 IngredientItem(it.name, it.quantity)
             }
         }
@@ -241,6 +248,8 @@ fun TopBar(search: String, onSearchChange: (String) -> Unit) {
 @Composable
 fun RecipeListPreview(){
     RecipePlannerLiteTheme {
-        RecipeListScreen(vm = viewModel())
+        RecipeListScreen(
+            onNavigateToCreate = {}
+        )
     }
 }
