@@ -15,7 +15,14 @@ class RecipeListViewModel : ViewModel() {
     init {
         loadRecipes()
     }
+    fun reloadRecipes() {
+        val recipes = RecipeRepository.getRecipes()
 
+        _state.value = _state.value.copy(
+            recipes = recipes,
+            filteredRecipes = recipes
+        )
+    }
     private fun loadRecipes() {
         val recipes = RecipeRepository.getRecipes()
 
