@@ -1,7 +1,6 @@
 package com.example.recipeplannerlite.views
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,10 +9,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -61,9 +58,7 @@ fun CreateRecipeScreen(
             item {
                 NameSection(
                     name = state.name,
-                    emoji = state.selectedEmoji,
-                    onNameChange = vm::updateName,
-                    onEmojiSelect = vm::selectEmoji
+                    onNameChange = vm::updateName
                 )
             }
 
@@ -107,7 +102,6 @@ fun IngredientHeader(count : Int) {
     ) {
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("🧂", fontSize = 18.sp)
             Text(
                 "Ingredientes",
                 modifier = Modifier.padding(start = 8.dp),
@@ -141,7 +135,6 @@ fun DescriptionSection(
         Column(modifier = Modifier.padding(14.dp)) {
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("💬")
                 Text(
                     "Descripción",
                     modifier = Modifier.padding(start = 6.dp)
@@ -165,11 +158,8 @@ fun DescriptionSection(
 @Composable
 fun NameSection(
     name: String,
-    emoji: String,
     onNameChange: (String) -> Unit,
-    onEmojiSelect: (String) -> Unit
 ) {
-    val emojiList = listOf("🍝", "🥗", "🌮", "🍲", "🍛", "🥘")
 
     Card(
         shape = RoundedCornerShape(16.dp),
@@ -178,7 +168,6 @@ fun NameSection(
         Column(modifier = Modifier.padding(14.dp)) {
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text("📝")
                 Text(
                     "Nombre de la receta",
                     modifier = Modifier.padding(start = 6.dp)
@@ -189,15 +178,6 @@ fun NameSection(
 
             Row(verticalAlignment = Alignment.CenterVertically) {
 
-                // Emoji seleccionado
-                Box(
-                    modifier = Modifier
-                        .size(52.dp)
-                        .background(Color(0xFFD8F3DC), RoundedCornerShape(12.dp)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(emoji, fontSize = 26.sp)
-                }
 
                 TextField(
                     value = name,
@@ -211,28 +191,6 @@ fun NameSection(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            Text("Elige un ícono", fontSize = 10.sp, color = Color.Gray)
-
-            LazyRow {
-                items(emojiList) { item ->
-                    val isSelected = item == emoji
-
-                    Box(
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .size(38.dp)
-                            .background(
-                                if (isSelected) Color(0xFF2D6A4F)
-                                else Color(0xFFD8F3DC),
-                                RoundedCornerShape(9.dp)
-                            )
-                            .clickable { onEmojiSelect(item) },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(item)
-                    }
-                }
-            }
         }
     }
 }

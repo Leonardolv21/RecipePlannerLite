@@ -1,7 +1,4 @@
 package com.example.recipeplannerlite.models
-
-
-
 data class RecipeState(
     val searchQuery: String = "",
     val selectedFilters: List<String> = emptyList(),

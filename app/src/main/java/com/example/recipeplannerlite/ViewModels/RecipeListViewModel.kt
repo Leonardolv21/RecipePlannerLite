@@ -12,6 +12,14 @@ class RecipeListViewModel : ViewModel() {
     private val _state = MutableStateFlow(RecipeState())
     val state: StateFlow<RecipeState> = _state.asStateFlow()
 
+
+    val availableFilters: List<String>
+        get() = _state.value.recipes
+            .flatMap { it.ingredients }
+            .map { it.name.lowercase().trim().replaceFirstChar { it.uppercase() } }
+            .distinct()
+            .sorted()
+
     init {
         loadRecipes()
     }
@@ -54,15 +62,17 @@ class RecipeListViewModel : ViewModel() {
         val stateValue = _state.value
 
         val filtered = stateValue.recipes.filter { recipe ->
-            recipe.name.contains(stateValue.searchQuery, ignoreCase = true) &&
-                    (
-                            stateValue.selectedFilters.isEmpty() ||
-                                    stateValue.selectedFilters.any { filter ->
-                                        recipe.ingredients.any { ingredient ->
-                                            ingredient.name.equals(filter, ignoreCase = true)
-                                        }
-                                    }
-                            )
+            val matchesSearch = recipe.name.contains(stateValue.searchQuery, ignoreCase = true)
+            val matchesFilter = if (stateValue.selectedFilters.isEmpty()) {
+                true
+            } else {
+                recipe.ingredients.any { ingredient ->
+                    stateValue.selectedFilters.any { filter ->
+                        ingredient.name.equals(filter, ignoreCase = true)
+                    }
+                                }
+            }
+            matchesSearch && matchesFilter
         }
 
         _state.value = _state.value.copy(filteredRecipes = filtered)

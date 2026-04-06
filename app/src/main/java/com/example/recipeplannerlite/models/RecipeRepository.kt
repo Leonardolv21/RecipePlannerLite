@@ -6,7 +6,6 @@ object RecipeRepository {
             id = 1,
             name = "Pasta Carbonara",
             description = "Clásica italiana",
-            emoji = "🍝",
             ingredients = listOf(
                 Ingredient("Espagueti", "200g")
             )
