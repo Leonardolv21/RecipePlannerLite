@@ -28,9 +28,6 @@ class CreateRecipeViewModel : ViewModel() {
         _state.value = _state.value.copy(description = value)
     }
 
-    fun selectEmoji(emoji: String) {
-        _state.value = _state.value.copy(selectedEmoji = emoji)
-    }
 
     fun addIngredient() {
         val list = _state.value.ingredients.toMutableList()
@@ -71,7 +68,6 @@ class CreateRecipeViewModel : ViewModel() {
             id = System.currentTimeMillis().toInt(),
             name = state.name,
             description = state.description,
-            emoji = state.selectedEmoji,
             ingredients = state.ingredients.map {
                 Ingredient(it.name, it.quantity)
             }

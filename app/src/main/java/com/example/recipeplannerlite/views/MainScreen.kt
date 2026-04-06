@@ -37,8 +37,6 @@ import com.example.recipeplannerlite.ui.theme.RecipePlannerLiteTheme
 import com.example.recipeplannerlite.ViewModels.RecipeListViewModel
 import com.example.recipeplannerlite.models.Recipe
 import androidx.lifecycle.viewmodel.compose.viewModel
-
-
 @Composable
 fun RecipeListScreen(
     modifier: Modifier = Modifier,
@@ -59,6 +57,7 @@ fun RecipeListScreen(
             )
 
             FilterSection(
+                availableFilters = vm.availableFilters,
                 selectedFilters = state.selectedFilters,
                 onFilterClick = vm::toggleFilter
             )
@@ -127,18 +126,9 @@ fun RecipeCard( recipe: Recipe) {
         Column(modifier = Modifier.padding(14.dp)) {
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .background(Color(0xFFD8F3DC), RoundedCornerShape(10.dp)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(recipe.emoji)
-                }
                 Column(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(start = 10.dp)
                 ) {
                     Text(recipe.name)
                     Text(recipe.description, fontSize = 12.sp, color = Color.Gray)
@@ -190,30 +180,32 @@ fun ResultCount(count : Int) {
 
 @Composable
 fun FilterSection(
+    availableFilters: List<String>,
     selectedFilters: List<String>,
     onFilterClick: (String) -> Unit
 ) {
-    val filters = listOf("Pollo", "Tomate", "Cebolla", "Ajo")
-
-    LazyRow {
-        items(filters) { filter ->
-
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
+    ) {
+        items(availableFilters) { filter ->
             val isSelected = selectedFilters.contains(filter)
 
             Box(
                 modifier = Modifier
-                    .padding(6.dp)
+                    .padding(end = 8.dp)
                     .background(
                         if (isSelected) Color(0xFF2D6A4F)
                         else Color(0xFFD8F3DC),
                         RoundedCornerShape(20.dp)
                     )
                     .clickable { onFilterClick(filter) }
-                    .padding(10.dp)
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
                 Text(
-                    filter,
-                    color = if (isSelected) Color.White else Color(0xFF2D6A4F)
+                    text = filter,
+                    color = if (isSelected) Color.White else Color(0xFF2D6A4F),
+                    fontSize = 14.sp
                 )
             }
         }
@@ -233,7 +225,6 @@ fun TopBar(search: String, onSearchChange: (String) -> Unit) {
             .padding(16.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("🥗")
 
             Column(modifier = Modifier.padding(start = 8.dp)) {
                 Text("PLANIFICADOR")

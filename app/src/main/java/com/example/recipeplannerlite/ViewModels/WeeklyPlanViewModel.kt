@@ -38,28 +38,36 @@ class WeeklyPlanViewModel : ViewModel() {
     }
 
     private fun generateShoppingList() {
-        val allIngredients = mutableMapOf<String, String>()
+        val allIngredients = mutableMapOf<String, Pair<Int, String>>()
 
         _state.value.plan.values
             .filterNotNull()
             .forEach { recipe ->
                 recipe.ingredients.forEach { ingredient ->
-                    allIngredients[ingredient.name] = ingredient.quantity
+                    val key = ingredient.name.lowercase().trim()
+                    val number = ingredient.quantity.filter { it.isDigit() }.toIntOrNull() ?: 1
+                    val unit = ingredient.quantity.filter { it.isLetter() }.trim()
+
+                    val existing = allIngredients[key]
+                    if (existing != null) {
+                        allIngredients[key] = Pair(existing.first + number, existing.second.ifBlank { unit })
+                    } else {
+                        allIngredients[key] = Pair(number, unit)
+                    }
                 }
             }
 
-        val items = allIngredients.map { (name, qty) ->
-            val existing = _state.value.shoppingList.find { it.name == name }
+        val items = allIngredients.map { (name, pair) ->
+            val existing = _state.value.shoppingList.find { it.name.lowercase().trim() == name }
             ShoppingItem(
                 name = name,
-                quantity = qty,
+                quantity = "${pair.first}${pair.second}",
                 isBought = existing?.isBought ?: false
             )
         }
 
         _state.value = _state.value.copy(shoppingList = items)
     }
-
     fun toggleIngredientBought(name: String) {
         val updated = _state.value.shoppingList.map { item ->
             if (item.name == name) item.copy(isBought = !item.isBought)
