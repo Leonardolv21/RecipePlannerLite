@@ -52,7 +52,7 @@ fun CreateRecipeScreen(
         }
     }
     Column {
-        TopBarCreate()
+        TopBarCreate(onBack = onBack)
 
         LazyColumn(
             modifier = Modifier.weight(1f)
@@ -238,7 +238,7 @@ fun NameSection(
 }
 
 @Composable
-fun TopBarCreate() {
+fun TopBarCreate(onBack: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -249,10 +249,8 @@ fun TopBarCreate() {
             )
             .padding(14.dp)
     ) {
-
-
         IconButton(
-            onClick = { /* TODO: navegar atrás */ },
+            onClick = onBack,
             modifier = Modifier.align(Alignment.CenterStart)
         ) {
             Icon(
@@ -262,7 +260,6 @@ fun TopBarCreate() {
             )
         }
 
-        // Título centrado
         Column(
             modifier = Modifier.align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally

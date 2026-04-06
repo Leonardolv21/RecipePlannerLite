@@ -2,6 +2,7 @@ package com.example.recipeplannerlite.views
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -42,10 +43,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 fun RecipeListScreen(
     modifier: Modifier = Modifier,
     vm: RecipeListViewModel = viewModel(),
-    onNavigateToCreate: () -> Unit
+    onNavigateToCreate: () -> Unit,
+    onNavigateToWeekly: () -> Unit
 ){
     val state = vm.state.collectAsState().value
-    LaunchedEffect(Unit) {
+    LaunchedEffect(true) {
         vm.reloadRecipes()
     }
 
@@ -66,27 +68,40 @@ fun RecipeListScreen(
             RecipeList(state.filteredRecipes)
         }
 
-        FabButton(onNavigateToCreate)
+        FabButton(onNavigateToCreate,
+            onNavigateToWeekly = onNavigateToWeekly
+        )
     }
 }
 
 @Composable
 fun FabButton(
-    onNavigateToCreate: () -> Unit
+    onNavigateToCreate: () -> Unit,
+    onNavigateToWeekly: () -> Unit
 ) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomEnd
     ) {
-        Button(
-            onClick = {
-                onNavigateToCreate()
-            },
-            shape = RoundedCornerShape(50),
-            modifier = Modifier.padding(20.dp)
+        Column(
+            modifier = Modifier.padding(20.dp),
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Icon(Icons.Default.Add, contentDescription = null)
-            Text("Nueva Receta")
+            Button(
+                onClick = onNavigateToWeekly,
+                shape = RoundedCornerShape(50)
+            ) {
+                Text("Plan semanal")
+            }
+
+            Button(
+                onClick = onNavigateToCreate,
+                shape = RoundedCornerShape(50)
+            ) {
+                Icon(Icons.Default.Add, contentDescription = null)
+                Text("Nueva Receta")
+            }
         }
     }
 }
@@ -249,7 +264,8 @@ fun TopBar(search: String, onSearchChange: (String) -> Unit) {
 fun RecipeListPreview(){
     RecipePlannerLiteTheme {
         RecipeListScreen(
-            onNavigateToCreate = {}
+            onNavigateToCreate = {},
+            onNavigateToWeekly = {}
         )
     }
 }
